@@ -1,17 +1,92 @@
 [
   {
     "name": "Spaghetti Bolognese",
-    "ingredients": [
-      "Nudeln",
-      "Hackfleisch",
-      "Tomatensoße",
-      "Zwiebel",
-      "Knoblauch",
-      "Olivenöl",
-      "Salz",
-      "Pfeffer"
-    ],
+    "ingredients": ["Nudeln", "Hackfleisch", "Tomatensoße", "Zwiebel", "Knoblauch", "Olivenöl", "Salz", "Pfeffer"],
     "time": 30,
+    "vegetarian": false
+  },
+  {
+    "name": "Gemüsepfanne",
+    "ingredients": ["Zucchini", "Paprika", "Karotte", "Zwiebel", "Brokkoli", "Olivenöl", "Salz", "Pfeffer"],
+    "time": 20,
+    "vegetarian": true
+  },
+  {
+    "name": "Hähnchen Curry",
+    "ingredients": ["Hähnchen", "Kokosmilch", "Currypaste (gelb)", "Zwiebel", "Knoblauch", "Reis", "Salz"],
+    "time": 35,
+    "vegetarian": false
+  },
+  {
+    "name": "Tomatensuppe",
+    "ingredients": ["Tomaten", "Zwiebel", "Knoblauch", "Gemüsebrühe", "Olivenöl", "Salz", "Pfeffer"],
+    "time": 25,
+    "vegetarian": true
+  },
+  {
+    "name": "Pfannkuchen",
+    "ingredients": ["Mehl", "Milch", "Ei", "Zucker", "Salz", "Butter"],
+    "time": 15,
+    "vegetarian": true
+  },
+  {
+    "name": "Fisch mit Kartoffeln",
+    "ingredients": ["Fisch", "Kartoffel", "Butter", "Zitrone", "Salz", "Pfeffer"],
+    "time": 30,
+    "vegetarian": false
+  },
+  {
+    "name": "Veggie Wrap",
+    "ingredients": ["Wraps", "Salat", "Tomate", "Gurke", "Joghurt", "Käse"],
+    "time": 10,
+    "vegetarian": true
+  },
+  {
+    "name": "Reis mit Gemüse",
+    "ingredients": ["Reis", "Karotte", "Erbsen", "Mais", "Sojasoße", "Öl"],
+    "time": 25,
+    "vegetarian": true
+  },
+  {
+    "name": "Lasagne",
+    "ingredients": ["Lasagneplatten", "Hackfleisch", "Tomatensoße", "Käse", "Zwiebel", "Knoblauch"],
+    "time": 60,
+    "vegetarian": false
+  },
+  {
+    "name": "Omelett",
+    "ingredients": ["Ei", "Milch", "Käse", "Salz", "Pfeffer", "Butter"],
+    "time": 10,
+    "vegetarian": true
+  },
+  {
+    "name": "Pizza Margherita",
+    "ingredients": ["Pizzateig", "Tomatensoße", "Mozzarella", "Olivenöl", "Basilikum"],
+    "time": 30,
+    "vegetarian": true
+  },
+  {
+    "name": "Chili con Carne",
+    "ingredients": ["Hackfleisch", "Kidneybohnen", "Tomaten", "Zwiebel", "Knoblauch", "Chili", "Paprika"],
+    "time": 40,
+    "vegetarian": false
+  },
+  {
+    "name": "Obstsalat",
+    "ingredients": ["Apfel", "Banane", "Orange", "Erdbeere", "Trauben", "Honig"],
+    "time": 10,
+    "vegetarian": true
+  },
+  {
+    "name": "Gemüsesuppe",
+    "ingredients": ["Karotte", "Sellerie", "Kartoffel", "Zwiebel", "Gemüsebrühe", "Salz", "Pfeffer"],
+    "time": 35,
+    "vegetarian": true
+  },
+  {
+    "name": "Burger",
+    "ingredients": ["Burgerpattie", "Burgerbrötchen", "Salat", "Tomate", "Ketchup", "Käse", "Zwiebel"],
+    "time": 20,
     "vegetarian": false
   }
 ]
