@@ -1,0 +1,17 @@
+[
+  {
+    "name": "Spaghetti Bolognese",
+    "ingredients": [
+      "Nudeln",
+      "Hackfleisch",
+      "Tomatensoße",
+      "Zwiebel",
+      "Knoblauch",
+      "Olivenöl",
+      "Salz",
+      "Pfeffer"
+    ],
+    "time": 30,
+    "vegetarian": false
+  }
+]
