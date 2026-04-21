@@ -109,7 +109,7 @@ else:
             st.write("⏱️ Zeit:", r["time"], "Min")
             st.write("🌱 vegetarisch:", "Ja" if r["vegetarian"] else "Nein")
 
-            st.write(f"📂 {r['category']} | 📊 {r['difficulty']}")
+            st.write(f"📂 {r.get('category', 'Keine Angabe')} | 📊 {r.get('difficulty', 'Keine Angabe')}")
             st.write("📝", r["description"])
 
             st.write("👨‍🍳 Schritte:")
