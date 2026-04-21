@@ -102,21 +102,22 @@ if not auswahl:
 else:
     for r in ergebnisse:
         if r["score"] > 0:
+
             st.write("------")
-            st.write("🍽️ Rezept:", r["name"])
+            st.write(f"🍽️ **{r['name']}**")
             st.write("⭐ Treffer:", r["score"])
             st.write("⏱️ Zeit:", r["time"], "Min")
-            st.write("🌱 vegetarisch:", r["vegetarian"])
+            st.write("🌱 vegetarisch:", "Ja" if r["vegetarian"] else "Nein")
 
-            # NEU 👇
-            st.write("📂 Kategorie:", r.get("category", "Keine Angabe"))
-            st.write("📊 Schwierigkeit:", r.get("difficulty", "Keine Angabe"))
-            st.write("📝 Beschreibung:", r.get("description", "Keine Beschreibung"))
+            st.write(f"📂 {r['category']} | 📊 {r['difficulty']}")
+            st.write("📝", r["description"])
 
             st.write("👨‍🍳 Schritte:")
             for step in r.get("steps", []):
                 st.write("-", step)
 
-            # fehlende Zutaten
             fehlend = [z for z in r["ingredients"] if z not in auswahl]
             st.write("❌ fehlt:", fehlend)
+
+            # ⭐ Bonus: einfache Bewertung
+            st.progress(r["score"] / len(r["ingredients"]))
