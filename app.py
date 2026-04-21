@@ -101,7 +101,7 @@ if not auswahl:
 
 else:
     for r in ergebnisse:
-    if r["score"] > 0:
+        if r["score"] > 0:
         st.write("------")
         st.write("🍽️ Rezept:", r["name"])
         st.write("⭐ Treffer:", r["score"])
