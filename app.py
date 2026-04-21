@@ -113,10 +113,10 @@ else:
             st.write("📊 Schwierigkeit:", r.get("difficulty", "Keine Angabe"))
             st.write("📝 Beschreibung:", r.get("description", "Keine Beschreibung"))
 
-           st.write("👨‍🍳 Schritte:")
-for step in r.get("steps", []):
-    st.write("-", step)
+            st.write("👨‍🍳 Schritte:")
+            for step in r.get("steps", []):
+                st.write("-", step)
 
-# fehlende Zutaten
-fehlend = [z for z in r["ingredients"] if z not in auswahl]
-st.write("❌ fehlt:", fehlend)
+            # fehlende Zutaten
+            fehlend = [z for z in r["ingredients"] if z not in auswahl]
+            st.write("❌ fehlt:", fehlend)
