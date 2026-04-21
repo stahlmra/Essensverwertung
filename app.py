@@ -101,13 +101,22 @@ if not auswahl:
 
 else:
     for r in ergebnisse:
-        if r["score"] > 0:
-            st.write("------")
-            st.write("🍽️ Rezept:", r["name"])
-            st.write("⭐ Treffer:", r["score"])
-            st.write("⏱️ Zeit:", r["time"], "Min")
-            st.write("🌱 vegetarisch:", r["vegetarian"])
+    if r["score"] > 0:
+        st.write("------")
+        st.write("🍽️ Rezept:", r["name"])
+        st.write("⭐ Treffer:", r["score"])
+        st.write("⏱️ Zeit:", r["time"], "Min")
+        st.write("🌱 vegetarisch:", r["vegetarian"])
 
-            # optionale Anzeige fehlender Zutaten
-            fehlend = [z for z in r["ingredients"] if z not in auswahl]
-            st.write("❌ fehlt:", fehlend)
+        # NEU 👇
+        st.write("📂 Kategorie:", r["category"])
+        st.write("📊 Schwierigkeit:", r["difficulty"])
+        st.write("📝 Beschreibung:", r["description"])
+
+        st.write("👨‍🍳 Schritte:")
+        for step in r["steps"]:
+            st.write("-", step)
+
+        # fehlende Zutaten
+        fehlend = [z for z in r["ingredients"] if z not in auswahl]
+        st.write("❌ fehlt:", fehlend)
