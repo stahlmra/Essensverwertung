@@ -3,90 +3,227 @@
     "name": "Spaghetti Bolognese",
     "ingredients": ["Nudeln", "Hackfleisch", "Tomatensoße", "Zwiebel", "Knoblauch", "Olivenöl", "Salz", "Pfeffer"],
     "time": 30,
-    "vegetarian": false
+    "vegetarian": false,
+    "category": "Hauptgericht",
+    "difficulty": "mittel",
+    "description": "Klassisches Nudelgericht mit herzhafter Hackfleisch-Tomatensoße.",
+    "steps": [
+      "Nudeln kochen",
+      "Hackfleisch anbraten",
+      "Zwiebel und Knoblauch hinzufügen",
+      "Tomatensoße einrühren",
+      "Würzen und servieren"
+    ]
   },
   {
     "name": "Gemüsepfanne",
     "ingredients": ["Zucchini", "Paprika", "Karotte", "Zwiebel", "Brokkoli", "Olivenöl", "Salz", "Pfeffer"],
     "time": 20,
-    "vegetarian": true
+    "vegetarian": true,
+    "category": "Hauptgericht",
+    "difficulty": "einfach",
+    "description": "Gesunde und schnelle Pfanne mit frischem Gemüse.",
+    "steps": [
+      "Gemüse schneiden",
+      "Öl erhitzen",
+      "Gemüse anbraten",
+      "Würzen und servieren"
+    ]
   },
   {
     "name": "Hähnchen Curry",
     "ingredients": ["Hähnchen", "Kokosmilch", "Currypaste (gelb)", "Zwiebel", "Knoblauch", "Reis", "Salz"],
     "time": 35,
-    "vegetarian": false
+    "vegetarian": false,
+    "category": "Hauptgericht",
+    "difficulty": "mittel",
+    "description": "Cremiges Currygericht mit exotischen Gewürzen.",
+    "steps": [
+      "Reis kochen",
+      "Hähnchen anbraten",
+      "Zwiebel und Knoblauch hinzufügen",
+      "Currypaste und Kokosmilch einrühren",
+      "Köcheln lassen und servieren"
+    ]
   },
   {
     "name": "Tomatensuppe",
     "ingredients": ["Tomaten", "Zwiebel", "Knoblauch", "Gemüsebrühe", "Olivenöl", "Salz", "Pfeffer"],
     "time": 25,
-    "vegetarian": true
+    "vegetarian": true,
+    "category": "Vorspeise",
+    "difficulty": "einfach",
+    "description": "Leichte Suppe aus frischen Tomaten.",
+    "steps": [
+      "Zutaten schneiden",
+      "Zwiebel und Knoblauch anbraten",
+      "Tomaten und Brühe hinzufügen",
+      "Kochen und pürieren",
+      "Würzen"
+    ]
   },
   {
     "name": "Pfannkuchen",
     "ingredients": ["Mehl", "Milch", "Ei", "Zucker", "Salz", "Butter"],
     "time": 15,
-    "vegetarian": true
+    "vegetarian": true,
+    "category": "Dessert",
+    "difficulty": "einfach",
+    "description": "Süße Pfannkuchen für Frühstück oder Dessert.",
+    "steps": [
+      "Teig mischen",
+      "Pfanne erhitzen",
+      "Teig ausbacken",
+      "Wenden und servieren"
+    ]
   },
   {
     "name": "Fisch mit Kartoffeln",
     "ingredients": ["Fisch", "Kartoffel", "Butter", "Zitrone", "Salz", "Pfeffer"],
     "time": 30,
-    "vegetarian": false
+    "vegetarian": false,
+    "category": "Hauptgericht",
+    "difficulty": "mittel",
+    "description": "Klassisches Fischgericht mit Kartoffelbeilage.",
+    "steps": [
+      "Kartoffeln kochen",
+      "Fisch würzen",
+      "Fisch anbraten",
+      "Mit Zitrone servieren"
+    ]
   },
   {
     "name": "Veggie Wrap",
     "ingredients": ["Wraps", "Salat", "Tomate", "Gurke", "Joghurt", "Käse"],
     "time": 10,
-    "vegetarian": true
+    "vegetarian": true,
+    "category": "Snack",
+    "difficulty": "einfach",
+    "description": "Schneller vegetarischer Wrap für unterwegs.",
+    "steps": [
+      "Gemüse schneiden",
+      "Wraps belegen",
+      "Soße hinzufügen",
+      "Einrollen und servieren"
+    ]
   },
   {
     "name": "Reis mit Gemüse",
     "ingredients": ["Reis", "Karotte", "Erbsen", "Mais", "Sojasoße", "Öl"],
     "time": 25,
-    "vegetarian": true
+    "vegetarian": true,
+    "category": "Hauptgericht",
+    "difficulty": "einfach",
+    "description": "Einfaches Reisgericht mit Gemüse.",
+    "steps": [
+      "Reis kochen",
+      "Gemüse anbraten",
+      "Reis hinzufügen",
+      "Mit Sojasoße würzen"
+    ]
   },
   {
     "name": "Lasagne",
     "ingredients": ["Lasagneplatten", "Hackfleisch", "Tomatensoße", "Käse", "Zwiebel", "Knoblauch"],
     "time": 60,
-    "vegetarian": false
+    "vegetarian": false,
+    "category": "Hauptgericht",
+    "difficulty": "schwer",
+    "description": "Ofengericht mit Schichten aus Nudeln, Fleisch und Käse.",
+    "steps": [
+      "Hackfleisch anbraten",
+      "Soße vorbereiten",
+      "Schichten aufbauen",
+      "Mit Käse überbacken"
+    ]
   },
   {
     "name": "Omelett",
     "ingredients": ["Ei", "Milch", "Käse", "Salz", "Pfeffer", "Butter"],
     "time": 10,
-    "vegetarian": true
+    "vegetarian": true,
+    "category": "Frühstück",
+    "difficulty": "einfach",
+    "description": "Schnelles Ei-Gericht für Frühstück oder Snack.",
+    "steps": [
+      "Eier verquirlen",
+      "Pfanne erhitzen",
+      "Ei-Masse braten",
+      "Käse hinzufügen"
+    ]
   },
   {
     "name": "Pizza Margherita",
     "ingredients": ["Pizzateig", "Tomatensoße", "Mozzarella", "Olivenöl", "Basilikum"],
     "time": 30,
-    "vegetarian": true
+    "vegetarian": true,
+    "category": "Hauptgericht",
+    "difficulty": "mittel",
+    "description": "Klassische Pizza mit Tomate und Käse.",
+    "steps": [
+      "Teig ausrollen",
+      "Soße verteilen",
+      "Käse hinzufügen",
+      "Backen"
+    ]
   },
   {
     "name": "Chili con Carne",
     "ingredients": ["Hackfleisch", "Kidneybohnen", "Tomaten", "Zwiebel", "Knoblauch", "Chili", "Paprika"],
     "time": 40,
-    "vegetarian": false
+    "vegetarian": false,
+    "category": "Hauptgericht",
+    "difficulty": "mittel",
+    "description": "Würziges Eintopfgericht mit Fleisch und Bohnen.",
+    "steps": [
+      "Hackfleisch anbraten",
+      "Gemüse hinzufügen",
+      "Tomaten und Bohnen dazugeben",
+      "Köcheln lassen"
+    ]
   },
   {
     "name": "Obstsalat",
     "ingredients": ["Apfel", "Banane", "Orange", "Erdbeere", "Trauben", "Honig"],
     "time": 10,
-    "vegetarian": true
+    "vegetarian": true,
+    "category": "Dessert",
+    "difficulty": "einfach",
+    "description": "Frischer Mix aus verschiedenen Früchten.",
+    "steps": [
+      "Obst schneiden",
+      "Mischen",
+      "Mit Honig verfeinern"
+    ]
   },
   {
     "name": "Gemüsesuppe",
     "ingredients": ["Karotte", "Sellerie", "Kartoffel", "Zwiebel", "Gemüsebrühe", "Salz", "Pfeffer"],
     "time": 35,
-    "vegetarian": true
+    "vegetarian": true,
+    "category": "Vorspeise",
+    "difficulty": "einfach",
+    "description": "Warme Suppe aus frischem Gemüse.",
+    "steps": [
+      "Gemüse schneiden",
+      "Kochen",
+      "Würzen",
+      "Servieren"
+    ]
   },
   {
     "name": "Burger",
     "ingredients": ["Burgerpattie", "Burgerbrötchen", "Salat", "Tomate", "Ketchup", "Käse", "Zwiebel"],
     "time": 20,
-    "vegetarian": false
+    "vegetarian": false,
+    "category": "Hauptgericht",
+    "difficulty": "einfach",
+    "description": "Saftiger Burger mit klassischen Zutaten.",
+    "steps": [
+      "Pattie braten",
+      "Brötchen vorbereiten",
+      "Belegen",
+      "Servieren"
+    ]
   }
 ]
