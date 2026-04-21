@@ -109,9 +109,9 @@ else:
             st.write("🌱 vegetarisch:", r["vegetarian"])
 
             # NEU 👇
-            st.write("📂 Kategorie:", r["category"])
-            st.write("📊 Schwierigkeit:", r["difficulty"])
-            st.write("📝 Beschreibung:", r["description"])
+         st.write("📂 Kategorie:", r.get("category", "Keine Angabe"))
+        st.write("📊 Schwierigkeit:", r.get("difficulty", "Keine Angabe"))
+        st.write("📝 Beschreibung:", r.get("description", "Keine Beschreibung"))
 
             st.write("👨‍🍳 Schritte:")
             for step in r["steps"]:
