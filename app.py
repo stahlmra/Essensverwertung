@@ -7,37 +7,6 @@ from PIL import Image
 
 
 # =========================
-# 🔧 ZUTATEN NORMALISIERUNG
-# =========================
-
-ZUTAT_MAPPING = {
-    "tomato": "tomaten/tomatensoße",
-    "tomatoes": "tomaten/tomatensoße",
-    "tomate": "tomaten/tomatensoße",
-    "onion": "zwiebel",
-    "onions": "zwiebel",
-    "potato": "kartoffel",
-    "potatoes": "kartoffel",
-    "garlic": "knoblauch",
-    "oil": "olivenöl",
-    "olive oil": "olivenöl",
-    "milk": "milch",
-    "egg": "ei",
-    "eggs": "ei",
-    "cheese": "käse",
-    "flour": "mehl",
-    "sugar": "zucker",
-    "salt": "salz",
-    "pepper": "pfeffer",
-    "noodles": "nudeln",
-    "pasta": "nudeln"
-}
-
-def normalize(zutat: str) -> str:
-    return ZUTAT_MAPPING.get(zutat.lower().strip(), zutat.lower().strip())
-
-
-# =========================
 # 1. DATEN LADEN
 # =========================
 
@@ -60,20 +29,10 @@ recipes = load_json("recipes.json")
 
 
 # =========================
-# 2. KI MODELL
+# 🧠 MASTER ZUTATEN (WICHTIG!)
 # =========================
 
-model = tf.keras.models.load_model("keras_model.h5", compile=False)
-
-with open("labels.txt", "r") as f:
-    labels = [line.strip() for line in f.readlines()]
-
-
-# =========================
-# 3. ZUTATENLISTE
-# =========================
-
-alle_zutaten = (
+alle_zutaten_raw = (
     exotisch +
     fluessigkeiten +
     gemueseobst +
@@ -85,9 +44,22 @@ alle_zutaten = (
     verarbeitet
 )
 
+# Mapping: lowercase -> Original
+alle_zutaten_norm = {z.lower().strip(): z for z in alle_zutaten_raw}
+
 
 # =========================
-# 4. UI
+# 2. KI MODELL
+# =========================
+
+model = tf.keras.models.load_model("keras_model.h5", compile=False)
+
+with open("labels.txt", "r") as f:
+    labels = [line.strip().lower() for line in f.readlines()]
+
+
+# =========================
+# 3. UI
 # =========================
 
 st.title("🍽️ Rezept Finder App")
@@ -102,10 +74,12 @@ uploaded_files = st.file_uploader(
 
 erkannte_zutaten = []
 
-if uploaded_files:
 
-    if len(uploaded_files) > 3:
-        st.warning("Maximal 3 Bilder erlaubt")
+# =========================
+# 4. KI ERKENNUNG (FIXED)
+# =========================
+
+if uploaded_files:
 
     for uploaded_file in uploaded_files[:3]:
 
@@ -119,15 +93,20 @@ if uploaded_files:
         prediction = model.predict(img_array)
         index = np.argmax(prediction)
 
-        raw = labels[index].strip()
-        zutat = normalize(raw)
+        raw = labels[index].strip().lower()
+
+        # 👉 MASTER MAPPING (KRITISCHER FIX)
+        if raw in alle_zutaten_norm:
+            zutat = alle_zutaten_norm[raw]
+        else:
+            zutat = raw
 
         if zutat not in erkannte_zutaten:
             erkannte_zutaten.append(zutat)
 
 
 # =========================
-# 🔥 KI OUTPUT (GEWÜNSCHTES FORMAT)
+# 5. KI OUTPUT
 # =========================
 
 if erkannte_zutaten:
@@ -138,30 +117,30 @@ if erkannte_zutaten:
 
 
 # =========================
-# 5. MANUELLE AUSWAHL
+# 6. MANUELLE AUSWAHL
 # =========================
 
 manuelle_auswahl = st.multiselect(
     "🥗 Wähle deine Zutaten:",
-    alle_zutaten
+    alle_zutaten_raw
 )
 
-auswahl = [normalize(z) for z in (manuelle_auswahl + erkannte_zutaten)]
+auswahl = [z.lower().strip() for z in (manuelle_auswahl + erkannte_zutaten)]
 
 
 # =========================
-# 6. MATCHING
+# 7. MATCHING
 # =========================
 
 def berechne_score(rezept, user_zutaten):
-    rezept_zutaten = [normalize(z) for z in rezept.get("ingredients", [])]
-    user = [normalize(z) for z in user_zutaten]
+    rezept_zutaten = [z.lower().strip() for z in rezept.get("ingredients", [])]
+    user = [z.lower().strip() for z in user_zutaten]
 
     return sum(1 for z in rezept_zutaten if z in user)
 
 
 # =========================
-# 7. REZEPTE
+# 8. REZEPTE
 # =========================
 
 ergebnisse = []
@@ -186,7 +165,7 @@ ergebnisse = sorted(ergebnisse, key=lambda x: x["score"], reverse=True)
 
 
 # =========================
-# 8. OUTPUT
+# 9. OUTPUT
 # =========================
 
 st.markdown("---")
@@ -217,7 +196,7 @@ else:
 
             fehlend = [
                 z for z in r.get("ingredients", [])
-                if normalize(z) not in auswahl
+                if z.lower().strip() not in auswahl
             ]
             st.write("❌ fehlt:", fehlend)
 
