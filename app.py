@@ -29,20 +29,20 @@ recipes = load_json("recipes.json")
 
 
 # =========================
-# 2. KI MODELL LADEN
+# 2. KI MODELL
 # =========================
 
 model = tf.keras.models.load_model("keras_model.h5", compile=False)
 
 with open("labels.txt", "r") as f:
-    labels = [line.strip() for line in f.readlines()]
+    labels = [line.strip().lower() for line in f.readlines()]
 
 
 # =========================
-# 3. ZUTATENLISTE
+# 3. ZUTATENLISTE (NORMALISIERT)
 # =========================
 
-alle_zutaten = (
+alle_zutaten_raw = (
     exotisch +
     fluessigkeiten +
     gemueseobst +
@@ -53,6 +53,8 @@ alle_zutaten = (
     tierisch +
     verarbeitet
 )
+
+alle_zutaten = [z.lower().strip() for z in alle_zutaten_raw]
 
 
 # =========================
@@ -88,7 +90,7 @@ if uploaded_files:
         prediction = model.predict(img_array)
         index = np.argmax(prediction)
 
-        zutat = labels[index].strip().capitalize()
+        zutat = labels[index].strip().lower()
 
         if zutat not in erkannte_zutaten:
             erkannte_zutaten.append(zutat)
@@ -97,39 +99,37 @@ if uploaded_files:
 
 
 # =========================
-# 5. ZUTATEN AUSWAHL
+# 5. MANUELLE AUSWAHL
 # =========================
 
 manuelle_auswahl = st.multiselect(
     "🥗 Wähle deine Zutaten:",
-    alle_zutaten
+    alle_zutaten_raw
 )
 
-# 👉 gemeinsame Liste (WICHTIG)
-auswahl = list(set(manuelle_auswahl + erkannte_zutaten))
+# NORMALISIERTE GESAMTLISTE
+auswahl = [z.lower().strip() for z in manuelle_auswahl + erkannte_zutaten]
 
 
 # =========================
-# 🔥 UI FEEDBACK (NEU)
+# DEBUG (optional)
 # =========================
 
-st.subheader("🧺 Deine aktuellen Zutaten")
-
-if auswahl:
-    st.write(", ".join(auswahl))
-else:
-    st.write("Noch keine Zutaten ausgewählt")
-
-if erkannte_zutaten:
-    st.info(f"🔄 KI hat Zutaten hinzugefügt: {', '.join(erkannte_zutaten)}")
+# st.write("DEBUG auswahl:", auswahl)
 
 
 # =========================
-# 6. MATCHING
+# 6. MATCHING FIX (WICHTIG!)
 # =========================
 
 def berechne_score(rezept, user_zutaten):
-    return sum(1 for z in rezept.get("ingredients", []) if z in user_zutaten)
+    rezept_zutaten = [
+        z.lower().strip() for z in rezept.get("ingredients", [])
+    ]
+
+    user = [z.lower().strip() for z in user_zutaten]
+
+    return sum(1 for z in rezept_zutaten if z in user)
 
 
 # =========================
@@ -168,8 +168,11 @@ if not auswahl:
     st.info("Bitte wähle Zutaten aus 😊")
 
 else:
+    found_any = False
+
     for r in ergebnisse:
         if r.get("score", 0) > 0:
+            found_any = True
 
             st.write("------")
             st.write(f"🍽️ **{r.get('name', 'Unbekannt')}**")
@@ -186,7 +189,7 @@ else:
 
             fehlend = [
                 z for z in r.get("ingredients", [])
-                if z not in auswahl
+                if z.lower().strip() not in auswahl
             ]
             st.write("❌ fehlt:", fehlend)
 
@@ -195,3 +198,6 @@ else:
                 st.progress(r.get("score", 0) / len(ingredients))
             else:
                 st.progress(0)
+
+    if not found_any:
+        st.warning("Keine passenden Rezepte gefunden – versuche mehr oder andere Zutaten 👍")
