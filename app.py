@@ -1,6 +1,11 @@
 import json
 import streamlit as st
 
+# 👉 NEU: KI IMPORTS
+import tensorflow as tf
+import numpy as np
+from PIL import Image
+
 # =========================
 # 1. DATEN LADEN
 # =========================
@@ -21,6 +26,12 @@ tierisch = load_json("tierisch.json")
 verarbeitet = load_json("verarbeitet.json")
 
 recipes = load_json("recipes.json")
+
+# 👉 NEU: MODELL LADEN
+model = tf.keras.models.load_model("keras_model.h5")
+
+with open("labels.txt", "r") as f:
+    labels = [line.strip() for line in f.readlines()]
 
 
 # =========================
@@ -46,10 +57,39 @@ alle_zutaten = (
 
 st.title("🍽️ Rezept Finder App")
 
+# 👉 NEU: BILD ERKENNUNG
+st.subheader("📸 Zutaten per Bild erkennen")
+
+uploaded_file = st.file_uploader("Lade ein Bild hoch", type=["jpg", "png"])
+
+erkannte_zutat = None
+
+if uploaded_file is not None:
+    image = Image.open(uploaded_file)
+    st.image(image, caption="Dein Bild", use_column_width=True)
+
+    img = image.resize((224, 224))
+    img_array = np.array(img)
+    img_array = np.expand_dims(img_array, axis=0) / 255.0
+
+    prediction = model.predict(img_array)
+    index = np.argmax(prediction)
+
+    erkannte_zutat = labels[index].strip()
+    erkannte_zutat = erkannte_zutat.capitalize()
+
+    st.success(f"Erkannt: {erkannte_zutat}")
+
+
 auswahl = st.multiselect(
     "🥗 Wähle deine Zutaten:",
     alle_zutaten
 )
+
+# 👉 NEU: erkannte Zutat hinzufügen
+if erkannte_zutat:
+    if erkannte_zutat not in auswahl:
+        auswahl.append(erkannte_zutat)
 
 
 # =========================
@@ -77,12 +117,17 @@ ergebnisse = []
 for rezept in recipes:
     score = berechne_score(rezept, auswahl)
 
+    # 👉 NEU: ALLE FELDER ÜBERNEHMEN
     ergebnisse.append({
-        "name": rezept["name"],
+        "name": rezept.get("name"),
         "score": score,
-        "time": rezept["time"],
-        "vegetarian": rezept["vegetarian"],
-        "ingredients": rezept["ingredients"]
+        "time": rezept.get("time"),
+        "vegetarian": rezept.get("vegetarian"),
+        "ingredients": rezept.get("ingredients"),
+        "category": rezept.get("category"),
+        "difficulty": rezept.get("difficulty"),
+        "description": rezept.get("description"),
+        "steps": rezept.get("steps")
     })
 
 
@@ -122,7 +167,6 @@ else:
             ]
             st.write("❌ fehlt:", fehlend)
 
-            # ⭐ Bonus: sichere Bewertung
             ingredients = r.get("ingredients", [])
             if ingredients:
                 st.progress(r.get("score", 0) / len(ingredients))
