@@ -29,7 +29,7 @@ recipes = load_json("recipes.json")
 
 
 # =========================
-# 🧠 MASTER ZUTATEN (WICHTIG!)
+# 🧠 MASTER ZUTATEN
 # =========================
 
 alle_zutaten_raw = (
@@ -44,7 +44,6 @@ alle_zutaten_raw = (
     verarbeitet
 )
 
-# Mapping: lowercase -> Original
 alle_zutaten_norm = {z.lower().strip(): z for z in alle_zutaten_raw}
 
 
@@ -76,7 +75,7 @@ erkannte_zutaten = []
 
 
 # =========================
-# 4. KI ERKENNUNG (FIXED)
+# 4. KI ERKENNUNG (ROBUST FIX)
 # =========================
 
 if uploaded_files:
@@ -95,10 +94,25 @@ if uploaded_files:
 
         raw = labels[index].strip().lower()
 
-        # 👉 MASTER MAPPING (KRITISCHER FIX)
+        # =========================
+        # 🔥 ROBUSTER MATCH FIX
+        # =========================
+
+        zutat = None
+
+        # 1. exakter Match
         if raw in alle_zutaten_norm:
             zutat = alle_zutaten_norm[raw]
-        else:
+
+        # 2. Teil-Match (WICHTIG!)
+        if zutat is None:
+            for key, val in alle_zutaten_norm.items():
+                if raw in key or key in raw:
+                    zutat = val
+                    break
+
+        # 3. fallback
+        if zutat is None:
             zutat = raw
 
         if zutat not in erkannte_zutaten:
@@ -126,6 +140,13 @@ manuelle_auswahl = st.multiselect(
 )
 
 auswahl = [z.lower().strip() for z in (manuelle_auswahl + erkannte_zutaten)]
+
+
+# =========================
+# 🔍 DEBUG (optional aktivieren)
+# =========================
+
+# st.write("DEBUG AUSWAHL:", auswahl)
 
 
 # =========================
