@@ -29,7 +29,7 @@ recipes = load_json("recipes.json")
 
 
 # =========================
-# 2. ZUTATENLISTE
+# 2. ZUTATENPOOL
 # =========================
 
 alle_zutaten_raw = (
@@ -46,7 +46,7 @@ alle_zutaten_raw = (
 
 
 # =========================
-# 3. MODEL
+# 3. KI MODELL
 # =========================
 
 model = tf.keras.models.load_model("keras_model.h5", compile=False)
@@ -71,7 +71,7 @@ erkannte_zutaten = []
 
 
 # =========================
-# 5. KI ERKENNUNG (MIT CONFIDENCE FIX)
+# 5. KI ERKENNUNG (STABIL)
 # =========================
 
 if uploaded_files:
@@ -90,11 +90,10 @@ if uploaded_files:
         index = np.argmax(prediction)
         confidence = prediction[index]
 
-        # 🔥 WICHTIG: SCHWELLE
         THRESHOLD = 0.80
 
         if confidence >= THRESHOLD:
-            zutat = labels[index].strip()
+            zutat = labels[index].strip().lower()
 
             if zutat not in erkannte_zutaten:
                 erkannte_zutaten.append(zutat)
@@ -108,9 +107,8 @@ if uploaded_files:
 
 if erkannte_zutaten:
     st.subheader("🤖 KI ERKANNT")
-
-    for zutat in erkannte_zutaten:
-        st.write(zutat)
+    for z in erkannte_zutaten:
+        st.write(z)
 
 
 # =========================
@@ -126,18 +124,34 @@ auswahl = [z.lower().strip() for z in (manuelle_auswahl + erkannte_zutaten)]
 
 
 # =========================
-# 8. MATCHING
+# 8. 🔥 FIXED MATCHING LOGIK
 # =========================
 
 def berechne_score(rezept, user_zutaten):
+
     rezept_zutaten = [z.lower().strip() for z in rezept.get("ingredients", [])]
     user = [z.lower().strip() for z in user_zutaten]
 
-    return sum(1 for z in rezept_zutaten if z in user)
+    score = 0
+
+    for rz in rezept_zutaten:
+        for uz in user:
+
+            # exakter Match
+            if rz == uz:
+                score += 1
+                break
+
+            # Teil-Match (wichtig!)
+            if uz in rz or rz in uz:
+                score += 0.8
+                break
+
+    return score
 
 
 # =========================
-# 9. REZEPTE
+# 9. REZEPTE BEWERTEN
 # =========================
 
 ergebnisse = []
@@ -175,12 +189,14 @@ else:
     found = False
 
     for r in ergebnisse:
-        if r.get("score", 0) > 0:
+
+        # 🔥 WICHTIG: nicht mehr >0, sondern echte Relevanz
+        if r.get("score", 0) >= 1:
             found = True
 
             st.write("------")
             st.write(f"🍽️ **{r.get('name')}**")
-            st.write("⭐ Treffer:", r.get("score"))
+            st.write("⭐ Treffer:", round(r.get("score", 0), 1))
             st.write("⏱️ Zeit:", r.get("time"), "Min")
             st.write("🌱 vegetarisch:", "Ja" if r.get("vegetarian") else "Nein")
 
