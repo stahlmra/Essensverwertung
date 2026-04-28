@@ -105,15 +105,13 @@ if uploaded_files:
 # 5. MANUELLE AUSWAHL
 # =========================
 
-auswahl = st.multiselect(
+manuelle_auswahl = st.multiselect(
     "🥗 Wähle deine Zutaten:",
     alle_zutaten
 )
 
-# erkannte Zutaten hinzufügen
-for zutat in erkannte_zutaten:
-    if zutat not in auswahl:
-        auswahl.append(zutat)
+# 👉 ECHTE gemeinsame Liste
+auswahl = list(set(manuelle_auswahl + erkannte_zutaten))
 
 
 # =========================
