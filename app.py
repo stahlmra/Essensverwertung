@@ -29,7 +29,7 @@ recipes = load_json("recipes.json")
 
 
 # =========================
-# 🧠 MASTER ZUTATEN
+# 2. ZUTATENLISTE
 # =========================
 
 alle_zutaten_raw = (
@@ -44,26 +44,22 @@ alle_zutaten_raw = (
     verarbeitet
 )
 
-alle_zutaten_norm = {z.lower().strip(): z for z in alle_zutaten_raw}
-
 
 # =========================
-# 2. KI MODELL
+# 3. MODEL
 # =========================
 
 model = tf.keras.models.load_model("keras_model.h5", compile=False)
 
 with open("labels.txt", "r") as f:
-    labels = [line.strip().lower() for line in f.readlines()]
+    labels = [line.strip() for line in f.readlines()]
 
 
 # =========================
-# 3. UI
+# 4. UI
 # =========================
 
 st.title("🍽️ Rezept Finder App")
-
-st.subheader("📸 Zutaten per Bild erkennen")
 
 uploaded_files = st.file_uploader(
     "Lade bis zu 3 Bilder hoch",
@@ -75,7 +71,7 @@ erkannte_zutaten = []
 
 
 # =========================
-# 4. KI ERKENNUNG (ROBUST FIX)
+# 5. KI ERKENNUNG (MIT CONFIDENCE FIX)
 # =========================
 
 if uploaded_files:
@@ -83,55 +79,42 @@ if uploaded_files:
     for uploaded_file in uploaded_files[:3]:
 
         image = Image.open(uploaded_file)
-        st.image(image, caption="Dein Bild", use_column_width=True)
+        st.image(image, use_column_width=True)
 
         img = image.resize((224, 224))
         img_array = np.array(img)
         img_array = np.expand_dims(img_array, axis=0) / 255.0
 
-        prediction = model.predict(img_array)
+        prediction = model.predict(img_array)[0]
+
         index = np.argmax(prediction)
+        confidence = prediction[index]
 
-        raw = labels[index].strip().lower()
+        # 🔥 WICHTIG: SCHWELLE
+        THRESHOLD = 0.80
 
-        # =========================
-        # 🔥 ROBUSTER MATCH FIX
-        # =========================
+        if confidence >= THRESHOLD:
+            zutat = labels[index].strip()
 
-        zutat = None
-
-        # 1. exakter Match
-        if raw in alle_zutaten_norm:
-            zutat = alle_zutaten_norm[raw]
-
-        # 2. Teil-Match (WICHTIG!)
-        if zutat is None:
-            for key, val in alle_zutaten_norm.items():
-                if raw in key or key in raw:
-                    zutat = val
-                    break
-
-        # 3. fallback
-        if zutat is None:
-            zutat = raw
-
-        if zutat not in erkannte_zutaten:
-            erkannte_zutaten.append(zutat)
+            if zutat not in erkannte_zutaten:
+                erkannte_zutaten.append(zutat)
+        else:
+            st.write("🤖 Keine sichere Zutat erkannt")
 
 
 # =========================
-# 5. KI OUTPUT
+# 6. KI OUTPUT
 # =========================
 
 if erkannte_zutaten:
     st.subheader("🤖 KI ERKANNT")
 
     for zutat in erkannte_zutaten:
-        st.write(" / ".join([teil.capitalize() for teil in zutat.split("/")]))
+        st.write(zutat)
 
 
 # =========================
-# 6. MANUELLE AUSWAHL
+# 7. MANUELLE AUSWAHL
 # =========================
 
 manuelle_auswahl = st.multiselect(
@@ -143,14 +126,7 @@ auswahl = [z.lower().strip() for z in (manuelle_auswahl + erkannte_zutaten)]
 
 
 # =========================
-# 🔍 DEBUG (optional aktivieren)
-# =========================
-
-# st.write("DEBUG AUSWAHL:", auswahl)
-
-
-# =========================
-# 7. MATCHING
+# 8. MATCHING
 # =========================
 
 def berechne_score(rezept, user_zutaten):
@@ -161,7 +137,7 @@ def berechne_score(rezept, user_zutaten):
 
 
 # =========================
-# 8. REZEPTE
+# 9. REZEPTE
 # =========================
 
 ergebnisse = []
@@ -186,7 +162,7 @@ ergebnisse = sorted(ergebnisse, key=lambda x: x["score"], reverse=True)
 
 
 # =========================
-# 9. OUTPUT
+# 10. OUTPUT
 # =========================
 
 st.markdown("---")
@@ -203,13 +179,13 @@ else:
             found = True
 
             st.write("------")
-            st.write(f"🍽️ **{r.get('name', 'Unbekannt')}**")
-            st.write("⭐ Treffer:", r.get("score", 0))
-            st.write("⏱️ Zeit:", r.get("time", "?"), "Min")
+            st.write(f"🍽️ **{r.get('name')}**")
+            st.write("⭐ Treffer:", r.get("score"))
+            st.write("⏱️ Zeit:", r.get("time"), "Min")
             st.write("🌱 vegetarisch:", "Ja" if r.get("vegetarian") else "Nein")
 
-            st.write(f"📂 {r.get('category', 'Keine Angabe')} | 📊 {r.get('difficulty', 'Keine Angabe')}")
-            st.write("📝", r.get("description", "Keine Beschreibung"))
+            st.write(f"📂 {r.get('category')} | 📊 {r.get('difficulty')}")
+            st.write("📝", r.get("description"))
 
             st.write("👨‍🍳 Schritte:")
             for step in r.get("steps", []):
