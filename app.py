@@ -4,14 +4,18 @@ import streamlit as st
 import tensorflow as tf
 import numpy as np
 from PIL import Image
+import re
 
 
 # =========================
-# 0. NORMALISIERUNG (NEU)
+# 0. NORMALISIERUNG (FIX)
 # =========================
 
 def norm(x):
-    return x.lower().strip()
+    x = str(x)
+    x = x.replace("\xa0", " ")
+    x = re.sub(r"\s+", " ", x)
+    return x.strip().lower()
 
 
 # =========================
@@ -54,7 +58,7 @@ alle_zutaten_raw = (
 
 
 # =========================
-# 3. KI MODELL
+# 3. MODEL
 # =========================
 
 model = tf.keras.models.load_model("keras_model.h5", compile=False)
@@ -115,7 +119,6 @@ if uploaded_files:
 
 if erkannte_zutaten:
     st.subheader("🤖 KI ERKANNT")
-
     for z in erkannte_zutaten:
         st.write(z)
 
