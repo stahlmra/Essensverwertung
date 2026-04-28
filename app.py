@@ -133,8 +133,8 @@ if uploaded_files:
 if erkannte_zutaten:
     st.subheader("🤖 KI ERKANNT")
 
-    for i, zutat in enumerate(erkannte_zutaten):
-        st.write(f"{i} {zutat.upper()}")
+    for zutat in erkannte_zutaten:
+        st.write(" / ".join([teil.capitalize() for teil in zutat.split("/")]))
 
 
 # =========================
