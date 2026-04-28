@@ -10,7 +10,7 @@ from PIL import Image
 # 🔧 ZUTATEN NORMALISIERUNG
 # =========================
 
-Zutat_MAPPING = {
+ZUTAT_MAPPING = {
     "tomato": "tomaten/tomatensoße",
     "tomatoes": "tomaten/tomatensoße",
     "tomate": "tomaten/tomatensoße",
@@ -34,7 +34,7 @@ Zutat_MAPPING = {
 }
 
 def normalize(zutat: str) -> str:
-    return Zutat_MAPPING.get(zutat.lower().strip(), zutat.lower().strip())
+    return ZUTAT_MAPPING.get(zutat.lower().strip(), zutat.lower().strip())
 
 
 # =========================
