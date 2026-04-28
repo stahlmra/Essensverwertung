@@ -11,8 +11,9 @@ from PIL import Image
 # =========================
 
 ZUTAT_MAPPING = {
-    "tomato": "tomate",
-    "tomatoes": "tomate",
+    "tomato": "tomaten/tomatensoße",
+    "tomatoes": "tomaten/tomatensoße",
+    "tomate": "tomaten/tomatensoße",
     "onion": "zwiebel",
     "onions": "zwiebel",
     "potato": "kartoffel",
@@ -27,7 +28,9 @@ ZUTAT_MAPPING = {
     "flour": "mehl",
     "sugar": "zucker",
     "salt": "salz",
-    "pepper": "pfeffer"
+    "pepper": "pfeffer",
+    "noodles": "nudeln",
+    "pasta": "nudeln"
 }
 
 def normalize(zutat: str) -> str:
@@ -122,7 +125,16 @@ if uploaded_files:
         if zutat not in erkannte_zutaten:
             erkannte_zutaten.append(zutat)
 
-    st.success(f"🤖 KI erkannt: {', '.join(erkannte_zutaten)}")
+
+# =========================
+# 🔥 KI OUTPUT (GEWÜNSCHTES FORMAT)
+# =========================
+
+if erkannte_zutaten:
+    st.subheader("🤖 KI ERKANNT")
+
+    for i, zutat in enumerate(erkannte_zutaten):
+        st.write(f"{i} {zutat.upper()}")
 
 
 # =========================
@@ -134,18 +146,11 @@ manuelle_auswahl = st.multiselect(
     alle_zutaten
 )
 
-# 👉 NORMALISIERTE GESAMTLISTE
 auswahl = [normalize(z) for z in (manuelle_auswahl + erkannte_zutaten)]
 
 
 # =========================
-# 6. DEBUG OPTIONAL
-# =========================
-# st.write("DEBUG:", auswahl)
-
-
-# =========================
-# 7. MATCHING
+# 6. MATCHING
 # =========================
 
 def berechne_score(rezept, user_zutaten):
@@ -156,7 +161,7 @@ def berechne_score(rezept, user_zutaten):
 
 
 # =========================
-# 8. REZEPTE
+# 7. REZEPTE
 # =========================
 
 ergebnisse = []
@@ -181,11 +186,11 @@ ergebnisse = sorted(ergebnisse, key=lambda x: x["score"], reverse=True)
 
 
 # =========================
-# 9. OUTPUT
+# 8. OUTPUT
 # =========================
 
 st.markdown("---")
-st.subheader("🍝 Passende Rezepte basierend auf deinen Zutaten")
+st.subheader("🍝 Passende Rezepte")
 
 if not auswahl:
     st.info("Bitte wähle Zutaten aus 😊")
