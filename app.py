@@ -1,10 +1,11 @@
 import json
 import streamlit as st
 
-# 👉 NEU: KI IMPORTS
+# KI IMPORTS
 import tensorflow as tf
 import numpy as np
 from PIL import Image
+
 
 # =========================
 # 1. DATEN LADEN
@@ -27,7 +28,11 @@ verarbeitet = load_json("verarbeitet.json")
 
 recipes = load_json("recipes.json")
 
-# 👉 NEU: MODELL LADEN
+
+# =========================
+# 2. KI MODELL LADEN
+# =========================
+
 model = tf.keras.models.load_model("keras_model.h5", compile=False)
 
 with open("labels.txt", "r") as f:
@@ -35,81 +40,92 @@ with open("labels.txt", "r") as f:
 
 
 # =========================
-# 2. ALLE ZUTATEN ZUSAMMENFÜHREN
+# 3. ZUTATENLISTE
 # =========================
 
 alle_zutaten = (
-    exotisch
-    + fluessigkeiten
-    + gemueseobst
-    + gewuerze
-    + halbfertig
-    + suesswaren
-    + tiefkuehl
-    + tierisch
-    + verarbeitet
+    exotisch +
+    fluessigkeiten +
+    gemueseobst +
+    gewuerze +
+    halbfertig +
+    suesswaren +
+    tiefkuehl +
+    tierisch +
+    verarbeitet
 )
 
 
 # =========================
-# 3. STREAMLIT UI
+# 4. STREAMLIT UI
 # =========================
 
 st.title("🍽️ Rezept Finder App")
 
-# 👉 NEU: BILD ERKENNUNG
+# =========================
+# 📸 KI BILD ERKENNUNG
+# =========================
+
 st.subheader("📸 Zutaten per Bild erkennen")
 
-uploaded_file = st.file_uploader("Lade ein Bild hoch", type=["jpg", "png"])
+uploaded_files = st.file_uploader(
+    "Lade bis zu 3 Bilder hoch",
+    type=["jpg", "png"],
+    accept_multiple_files=True
+)
 
-erkannte_zutat = None
+erkannte_zutaten = []
 
-if uploaded_file is not None:
-    image = Image.open(uploaded_file)
-    st.image(image, caption="Dein Bild", use_column_width=True)
+if uploaded_files:
 
-    img = image.resize((224, 224))
-    img_array = np.array(img)
-    img_array = np.expand_dims(img_array, axis=0) / 255.0
+    if len(uploaded_files) > 3:
+        st.warning("Maximal 3 Bilder erlaubt")
 
-    prediction = model.predict(img_array)
-    index = np.argmax(prediction)
+    for uploaded_file in uploaded_files[:3]:
 
-    erkannte_zutat = labels[index].strip()
-    erkannte_zutat = erkannte_zutat.capitalize()
+        image = Image.open(uploaded_file)
+        st.image(image, caption="Dein Bild", use_column_width=True)
 
-    st.success(f"Erkannt: {erkannte_zutat}")
+        img = image.resize((224, 224))
+        img_array = np.array(img)
+        img_array = np.expand_dims(img_array, axis=0) / 255.0
 
+        prediction = model.predict(img_array)
+        index = np.argmax(prediction)
+
+        zutat = labels[index].strip().capitalize()
+
+        if zutat not in erkannte_zutaten:
+            erkannte_zutaten.append(zutat)
+
+    st.success(f"Erkannt: {', '.join(erkannte_zutaten)}")
+
+
+# =========================
+# 5. MANUELLE AUSWAHL
+# =========================
 
 auswahl = st.multiselect(
     "🥗 Wähle deine Zutaten:",
     alle_zutaten
 )
 
-# 👉 NEU: erkannte Zutat hinzufügen
-if erkannte_zutat:
-    if erkannte_zutat not in auswahl:
-        auswahl.append(erkannte_zutat)
+# erkannte Zutaten hinzufügen
+for zutat in erkannte_zutaten:
+    if zutat not in auswahl:
+        auswahl.append(zutat)
 
 
 # =========================
-# 4. MATCHING-LOGIK
+# 6. MATCHING
 # =========================
 
 def berechne_score(rezept, user_zutaten):
-    rezept_zutaten = rezept["ingredients"]
-
-    treffer = 0
-
-    for zutat in rezept_zutaten:
-        if zutat in user_zutaten:
-            treffer += 1
-
-    return treffer
+    return sum(1 for z in rezept["ingredients"] if z in user_zutaten)
 
 
 # =========================
-# 5. REZEPTE BEWERTEN
+# 7. REZEPTE BEWERTEN
 # =========================
 
 ergebnisse = []
@@ -117,7 +133,6 @@ ergebnisse = []
 for rezept in recipes:
     score = berechne_score(rezept, auswahl)
 
-    # 👉 NEU: ALLE FELDER ÜBERNEHMEN
     ergebnisse.append({
         "name": rezept.get("name"),
         "score": score,
@@ -131,12 +146,12 @@ for rezept in recipes:
     })
 
 
-# sortieren (beste zuerst)
+# sortieren
 ergebnisse = sorted(ergebnisse, key=lambda x: x["score"], reverse=True)
 
 
 # =========================
-# 6. ERGEBNISSE ANZEIGEN
+# 8. AUSGABE
 # =========================
 
 st.subheader("🍝 Passende Rezepte")
@@ -151,8 +166,8 @@ else:
             st.write("------")
             st.write(f"🍽️ **{r.get('name', 'Unbekannt')}**")
             st.write("⭐ Treffer:", r.get("score", 0))
-            st.write("⏱️ Zeit:", r.get("time", "?" ), "Min")
-            st.write("🌱 vegetarisch:", "Ja" if r.get("vegetarian", False) else "Nein")
+            st.write("⏱️ Zeit:", r.get("time", "?"), "Min")
+            st.write("🌱 vegetarisch:", "Ja" if r.get("vegetarian") else "Nein")
 
             st.write(f"📂 {r.get('category', 'Keine Angabe')} | 📊 {r.get('difficulty', 'Keine Angabe')}")
             st.write("📝", r.get("description", "Keine Beschreibung"))
