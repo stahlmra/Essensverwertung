@@ -110,9 +110,11 @@ manuelle_auswahl = st.multiselect(
     alle_zutaten
 )
 
-# 👉 ECHTE gemeinsame Liste
 auswahl = list(set(manuelle_auswahl + erkannte_zutaten))
 
+# 👉 HIER EINBAUEN
+if erkannte_zutaten:
+    st.info("🔄 Zutaten wurden aus Bildern hinzugefügt – Rezepte werden aktualisiert")
 
 # =========================
 # 6. MATCHING
