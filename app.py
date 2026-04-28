@@ -28,7 +28,7 @@ verarbeitet = load_json("verarbeitet.json")
 recipes = load_json("recipes.json")
 
 # 👉 NEU: MODELL LADEN
-model = tf.keras.models.load_model("keras_model.h5")
+model = tf.keras.models.load_model("keras_model.h5", compile=False)
 
 with open("labels.txt", "r") as f:
     labels = [line.strip() for line in f.readlines()]
