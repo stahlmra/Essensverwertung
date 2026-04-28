@@ -7,6 +7,34 @@ from PIL import Image
 
 
 # =========================
+# 🔧 ZUTATEN NORMALISIERUNG
+# =========================
+
+ZUTAT_MAPPING = {
+    "tomato": "tomate",
+    "tomatoes": "tomate",
+    "onion": "zwiebel",
+    "onions": "zwiebel",
+    "potato": "kartoffel",
+    "potatoes": "kartoffel",
+    "garlic": "knoblauch",
+    "oil": "olivenöl",
+    "olive oil": "olivenöl",
+    "milk": "milch",
+    "egg": "ei",
+    "eggs": "ei",
+    "cheese": "käse",
+    "flour": "mehl",
+    "sugar": "zucker",
+    "salt": "salz",
+    "pepper": "pfeffer"
+}
+
+def normalize(zutat: str) -> str:
+    return ZUTAT_MAPPING.get(zutat.lower().strip(), zutat.lower().strip())
+
+
+# =========================
 # 1. DATEN LADEN
 # =========================
 
@@ -35,14 +63,14 @@ recipes = load_json("recipes.json")
 model = tf.keras.models.load_model("keras_model.h5", compile=False)
 
 with open("labels.txt", "r") as f:
-    labels = [line.strip().lower() for line in f.readlines()]
+    labels = [line.strip() for line in f.readlines()]
 
 
 # =========================
-# 3. ZUTATENLISTE (NORMALISIERT)
+# 3. ZUTATENLISTE
 # =========================
 
-alle_zutaten_raw = (
+alle_zutaten = (
     exotisch +
     fluessigkeiten +
     gemueseobst +
@@ -53,8 +81,6 @@ alle_zutaten_raw = (
     tierisch +
     verarbeitet
 )
-
-alle_zutaten = [z.lower().strip() for z in alle_zutaten_raw]
 
 
 # =========================
@@ -90,7 +116,8 @@ if uploaded_files:
         prediction = model.predict(img_array)
         index = np.argmax(prediction)
 
-        zutat = labels[index].strip().lower()
+        raw = labels[index].strip()
+        zutat = normalize(raw)
 
         if zutat not in erkannte_zutaten:
             erkannte_zutaten.append(zutat)
@@ -104,36 +131,32 @@ if uploaded_files:
 
 manuelle_auswahl = st.multiselect(
     "🥗 Wähle deine Zutaten:",
-    alle_zutaten_raw
+    alle_zutaten
 )
 
-# NORMALISIERTE GESAMTLISTE
-auswahl = [z.lower().strip() for z in manuelle_auswahl + erkannte_zutaten]
+# 👉 NORMALISIERTE GESAMTLISTE
+auswahl = [normalize(z) for z in (manuelle_auswahl + erkannte_zutaten)]
 
 
 # =========================
-# DEBUG (optional)
+# 6. DEBUG OPTIONAL
 # =========================
-
-# st.write("DEBUG auswahl:", auswahl)
+# st.write("DEBUG:", auswahl)
 
 
 # =========================
-# 6. MATCHING FIX (WICHTIG!)
+# 7. MATCHING
 # =========================
 
 def berechne_score(rezept, user_zutaten):
-    rezept_zutaten = [
-        z.lower().strip() for z in rezept.get("ingredients", [])
-    ]
-
-    user = [z.lower().strip() for z in user_zutaten]
+    rezept_zutaten = [normalize(z) for z in rezept.get("ingredients", [])]
+    user = [normalize(z) for z in user_zutaten]
 
     return sum(1 for z in rezept_zutaten if z in user)
 
 
 # =========================
-# 7. REZEPTE
+# 8. REZEPTE
 # =========================
 
 ergebnisse = []
@@ -158,7 +181,7 @@ ergebnisse = sorted(ergebnisse, key=lambda x: x["score"], reverse=True)
 
 
 # =========================
-# 8. OUTPUT
+# 9. OUTPUT
 # =========================
 
 st.markdown("---")
@@ -168,11 +191,11 @@ if not auswahl:
     st.info("Bitte wähle Zutaten aus 😊")
 
 else:
-    found_any = False
+    found = False
 
     for r in ergebnisse:
         if r.get("score", 0) > 0:
-            found_any = True
+            found = True
 
             st.write("------")
             st.write(f"🍽️ **{r.get('name', 'Unbekannt')}**")
@@ -189,7 +212,7 @@ else:
 
             fehlend = [
                 z for z in r.get("ingredients", [])
-                if z.lower().strip() not in auswahl
+                if normalize(z) not in auswahl
             ]
             st.write("❌ fehlt:", fehlend)
 
@@ -199,5 +222,5 @@ else:
             else:
                 st.progress(0)
 
-    if not found_any:
+    if not found:
         st.warning("Keine passenden Rezepte gefunden – versuche mehr oder andere Zutaten 👍")
