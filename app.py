@@ -1,7 +1,6 @@
 import json
 import streamlit as st
 
-# KI IMPORTS
 import tensorflow as tf
 import numpy as np
 from PIL import Image
@@ -57,14 +56,10 @@ alle_zutaten = (
 
 
 # =========================
-# 4. STREAMLIT UI
+# 4. UI
 # =========================
 
 st.title("🍽️ Rezept Finder App")
-
-# =========================
-# 📸 KI BILD ERKENNUNG
-# =========================
 
 st.subheader("📸 Zutaten per Bild erkennen")
 
@@ -98,11 +93,11 @@ if uploaded_files:
         if zutat not in erkannte_zutaten:
             erkannte_zutaten.append(zutat)
 
-    st.success(f"Erkannt: {', '.join(erkannte_zutaten)}")
+    st.success(f"🤖 KI erkannt: {', '.join(erkannte_zutaten)}")
 
 
 # =========================
-# 5. MANUELLE AUSWAHL
+# 5. ZUTATEN AUSWAHL
 # =========================
 
 manuelle_auswahl = st.multiselect(
@@ -110,22 +105,35 @@ manuelle_auswahl = st.multiselect(
     alle_zutaten
 )
 
+# 👉 gemeinsame Liste (WICHTIG)
 auswahl = list(set(manuelle_auswahl + erkannte_zutaten))
 
-# 👉 HIER EINBAUEN
+
+# =========================
+# 🔥 UI FEEDBACK (NEU)
+# =========================
+
+st.subheader("🧺 Deine aktuellen Zutaten")
+
+if auswahl:
+    st.write(", ".join(auswahl))
+else:
+    st.write("Noch keine Zutaten ausgewählt")
+
 if erkannte_zutaten:
-    st.info("🔄 Zutaten wurden aus Bildern hinzugefügt – Rezepte werden aktualisiert")
+    st.info(f"🔄 KI hat Zutaten hinzugefügt: {', '.join(erkannte_zutaten)}")
+
 
 # =========================
 # 6. MATCHING
 # =========================
 
 def berechne_score(rezept, user_zutaten):
-    return sum(1 for z in rezept["ingredients"] if z in user_zutaten)
+    return sum(1 for z in rezept.get("ingredients", []) if z in user_zutaten)
 
 
 # =========================
-# 7. REZEPTE BEWERTEN
+# 7. REZEPTE
 # =========================
 
 ergebnisse = []
@@ -146,15 +154,15 @@ for rezept in recipes:
     })
 
 
-# sortieren
 ergebnisse = sorted(ergebnisse, key=lambda x: x["score"], reverse=True)
 
 
 # =========================
-# 8. AUSGABE
+# 8. OUTPUT
 # =========================
 
-st.subheader("🍝 Passende Rezepte")
+st.markdown("---")
+st.subheader("🍝 Passende Rezepte basierend auf deinen Zutaten")
 
 if not auswahl:
     st.info("Bitte wähle Zutaten aus 😊")
