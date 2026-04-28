@@ -7,6 +7,14 @@ from PIL import Image
 
 
 # =========================
+# 0. NORMALISIERUNG (NEU)
+# =========================
+
+def norm(x):
+    return x.lower().strip()
+
+
+# =========================
 # 1. DATEN LADEN
 # =========================
 
@@ -71,7 +79,7 @@ erkannte_zutaten = []
 
 
 # =========================
-# 5. KI ERKENNUNG (STABIL)
+# 5. KI ERKENNUNG
 # =========================
 
 if uploaded_files:
@@ -93,7 +101,7 @@ if uploaded_files:
         THRESHOLD = 0.80
 
         if confidence >= THRESHOLD:
-            zutat = labels[index].strip().lower()
+            zutat = norm(labels[index])
 
             if zutat not in erkannte_zutaten:
                 erkannte_zutaten.append(zutat)
@@ -107,6 +115,7 @@ if uploaded_files:
 
 if erkannte_zutaten:
     st.subheader("🤖 KI ERKANNT")
+
     for z in erkannte_zutaten:
         st.write(z)
 
@@ -120,29 +129,27 @@ manuelle_auswahl = st.multiselect(
     alle_zutaten_raw
 )
 
-auswahl = [z.lower().strip() for z in (manuelle_auswahl + erkannte_zutaten)]
+auswahl = [norm(z) for z in (manuelle_auswahl + erkannte_zutaten)]
 
 
 # =========================
-# 8. 🔥 FIXED MATCHING LOGIK
+# 8. SCORE (FIXED)
 # =========================
 
 def berechne_score(rezept, user_zutaten):
 
-    rezept_zutaten = [z.lower().strip() for z in rezept.get("ingredients", [])]
-    user = [z.lower().strip() for z in user_zutaten]
+    rezept_zutaten = [norm(z) for z in rezept.get("ingredients", [])]
+    user = [norm(z) for z in user_zutaten]
 
     score = 0
 
     for rz in rezept_zutaten:
         for uz in user:
 
-            # exakter Match
             if rz == uz:
                 score += 1
                 break
 
-            # Teil-Match (wichtig!)
             if uz in rz or rz in uz:
                 score += 0.8
                 break
@@ -151,7 +158,7 @@ def berechne_score(rezept, user_zutaten):
 
 
 # =========================
-# 9. REZEPTE BEWERTEN
+# 9. REZEPTE
 # =========================
 
 ergebnisse = []
@@ -190,7 +197,6 @@ else:
 
     for r in ergebnisse:
 
-        # 🔥 WICHTIG: nicht mehr >0, sondern echte Relevanz
         if r.get("score", 0) >= 1:
             found = True
 
@@ -209,7 +215,7 @@ else:
 
             fehlend = [
                 z for z in r.get("ingredients", [])
-                if z.lower().strip() not in auswahl
+                if norm(z) not in auswahl
             ]
             st.write("❌ fehlt:", fehlend)
 
