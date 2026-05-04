@@ -1,7 +1,7 @@
 [
   {
     "name": "Spaghetti Bolognese",
-    "ingredients": ["Nudeln", "Hackfleisch", "tomatensoße", "Käse"],
+    "ingredients": ["Nudeln", "Hackfleisch", "Tomatensoße", "Käse"],
     "time": 30,
     "vegetarian": false,
     "category": "Hauptgericht",
