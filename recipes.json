@@ -1,13 +1,13 @@
 [
   {
     "name": "Spaghetti Bolognese",
-    "ingredients": ["Nudeln", "Hackfleisch", "Tomatensoße", "Zwiebel", "Knoblauch", "Olivenöl", "Salz", "Pfeffer"],
+    "ingredients": ["Nudeln", "Hackfleisch", "Tomatensoße", "Käse"],
     "time": 30,
     "vegetarian": false,
     "category": "Hauptgericht",
     "difficulty": "mittel",
     "description": "Klassisches Nudelgericht mit herzhafter Hackfleisch-Tomatensoße.",
-    "steps": ["Nudeln kochen", "Hackfleisch anbraten", "Zwiebel und Knoblauch hinzufügen", "Tomatensoße einrühren", "Würzen und servieren"]
+    "steps": ["Nudeln kochen", "Hackfleisch anbraten", "Tomatensoße einrühren", "Würzen und servieren"]
   },
   {
     "name": "Gemüsepfanne",
