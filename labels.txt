@@ -1,4 +1,4 @@
-0 Nudeln
-1 Tomatensoße
-2 Hackfleisch
-3 Käse
+Nudeln
+Tomatensoße
+Hackfleisch
+Käse
